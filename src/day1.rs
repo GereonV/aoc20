@@ -1,44 +1,48 @@
 use std::{collections::HashSet, mem::MaybeUninit};
 
-pub fn puzzle1() {
-    let mut set = HashSet::new();
-    set.reserve(INPUT_LINE_COUNT);
-    for n in INPUT.lines().map(|l| l.parse::<usize>().unwrap()) {
-        let other = TARGET - n;
-        if set.contains(&other) {
-            println!("Day 1 Puzzle 1: {}", n * other);
-            return;
-        }
-        set.insert(n);
-    }
-    unreachable!()
-}
-
 fn get_nums() -> [usize; INPUT_LINE_COUNT] {
     let mut buf: [MaybeUninit<usize>; INPUT_LINE_COUNT] = unsafe {
         MaybeUninit::uninit().assume_init()
     };
     for (l, n) in INPUT.lines().zip(&mut buf) {
-        n.write(unsafe { l.parse::<usize>().unwrap_unchecked() });
+        n.write(unsafe { l.parse().unwrap_unchecked() });
     }
     unsafe { std::mem::transmute(buf) }
 }
 
-pub fn puzzle2() {
-    let nums = get_nums();
+fn puzzle1(nums: &[usize; INPUT_LINE_COUNT]) -> usize {
+    let mut set = HashSet::new();
+    set.reserve(INPUT_LINE_COUNT);
+    for n in nums {
+        let other = TARGET - n;
+        if set.contains(&other) {
+            return n * other;
+        }
+        set.insert(*n);
+    }
+    unreachable!()
+}
+
+fn puzzle2(nums: &[usize; INPUT_LINE_COUNT]) -> usize {
     let mut iter1 = nums.iter();
     while let Some(x) = iter1.next() {
         let mut iter2 = iter1.clone();
         while let Some(y) = iter2.next() {
             for z in iter2.clone() {
                 if x + y + z == TARGET {
-                    println!("Day 1 Puzzle 2: {}", x * y * z);
-                    return;
+                    return x * y * z;
                 }
             }
         }
     }
     unreachable!()
+}
+
+pub fn run() -> (usize, usize) {
+    let nums = get_nums();
+    let p1 = puzzle1(&nums);
+    let p2 = puzzle2(&nums);
+    (p1, p2)
 }
 
 const TARGET: usize = 2020;

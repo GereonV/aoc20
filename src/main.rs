@@ -1,6 +1,8 @@
 mod day1;
+use day1::*;
 
 fn main() {
-    day1::puzzle1();
-    day1::puzzle2();
+    let (p1, p2) = run();
+    println!("Puzzle 1: {}", p1);
+    println!("Puzzle 2: {}", p2);
 }
