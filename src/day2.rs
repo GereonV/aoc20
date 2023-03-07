@@ -34,24 +34,26 @@ fn parse() -> [PasswordWithPolicy; INPUT_LINE_COUNT] {
 	unsafe { std::mem::transmute(buf) }
 }
 
-fn puzzle1(passwords: &[PasswordWithPolicy; INPUT_LINE_COUNT]) -> usize {
-	passwords.iter().filter(|p| {
-		let count = p.password.iter().filter(|c| **c == p.policy.char).count();
-		(count >= p.policy.low) && (count <= p.policy.high)
-	}).count()
+fn count(passwords: &[PasswordWithPolicy; INPUT_LINE_COUNT], mut filter: impl FnMut(&PasswordWithPolicy) -> bool) -> usize {
+	passwords.iter().filter(|p| filter(p)).count()
 }
 
-fn puzzle2(passwords: &[PasswordWithPolicy; INPUT_LINE_COUNT]) -> usize {
-	passwords.iter().filter(|p| {
-		let left  = p.password[p.policy.low  - 1] == p.policy.char;
-		let right = p.password[p.policy.high - 1] == p.policy.char;
-		left != right
-	}).count()
+fn filter1(p: &PasswordWithPolicy) -> bool {
+	let count = p.password.iter().filter(|c| **c == p.policy.char).count();
+	(count >= p.policy.low) && (count <= p.policy.high)
+}
+
+fn filter2(p: &PasswordWithPolicy) -> bool {
+	let left  = p.password[p.policy.low  - 1] == p.policy.char;
+	let right = p.password[p.policy.high - 1] == p.policy.char;
+	left != right
 }
 
 pub fn run() -> (usize, usize) {
 	let passwords = parse();
-	(puzzle1(&passwords), puzzle2(&passwords))
+	let p1 = count(&passwords, filter1);
+	let p2 = count(&passwords, filter2);
+	(p1, p2)
 }
 
 const INPUT_LINE_COUNT: usize = 1000;
