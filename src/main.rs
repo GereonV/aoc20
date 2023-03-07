@@ -1,5 +1,5 @@
-mod day2;
-use day2::*;
+mod day3;
+use day3::*;
 
 fn main() {
     let (p1, p2) = run();
