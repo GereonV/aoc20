@@ -4,7 +4,11 @@ pub fn run() -> (usize, usize) {
     for pw in INPUT.split("\n\n") {
         let mut amt_keys = 0;
         let mut valid = true;
-        for pair in pw.lines().flat_map(|line| line.split(' ')).filter(|pair| !pair.starts_with("cid")) {
+        for pair in pw
+            .lines()
+            .flat_map(|line| line.split(' '))
+            .filter(|pair| !pair.starts_with("cid"))
+        {
             amt_keys += 1;
             if !valid {
                 continue;
@@ -31,11 +35,13 @@ macro_rules! between {
     };
 
     ($str:expr, $lo:expr, $hi:expr) => {
-        $str.parse::<u16>().map_or(false, |i| ($lo..=$hi).contains(&i))
+        $str.parse::<u16>()
+            .map_or(false, |i| ($lo..=$hi).contains(&i))
     };
 
     ($str:expr, $idx:expr, $unit:expr, $lo:expr, $hi:expr) => {
-        $str.get($idx..).map_or(false, |unit| unit == $unit) && between!(unsafe { $str.get_unchecked(..$idx) }, $lo, $hi)
+        $str.get($idx..).map_or(false, |unit| unit == $unit)
+            && between!(unsafe { $str.get_unchecked(..$idx) }, $lo, $hi)
     };
 }
 
@@ -43,9 +49,15 @@ const VALIDATORS: [(&str, fn(&str) -> bool); 7] = [
     ("byr", between!(1920, 2002)),
     ("iyr", between!(2010, 2020)),
     ("eyr", between!(2020, 2030)),
-    ("hgt", |s| between!(s, 3, "cm", 150, 193) || between!(s, 2, "in", 59, 76)),
-    ("hcl", |s| s.len() == 7 && s.starts_with('#') && s[1..].chars().all(|c| c.is_ascii_hexdigit())),
-    ("ecl", |s| ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&s)),
+    ("hgt", |s| {
+        between!(s, 3, "cm", 150, 193) || between!(s, 2, "in", 59, 76)
+    }),
+    ("hcl", |s| {
+        s.len() == 7 && s.starts_with('#') && s[1..].chars().all(|c| c.is_ascii_hexdigit())
+    }),
+    ("ecl", |s| {
+        ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&s)
+    }),
     ("pid", |s| s.len() == 9),
 ];
 const INPUT: &str = r"byr:1983 iyr:2017
